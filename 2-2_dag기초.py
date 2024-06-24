@@ -13,8 +13,8 @@ from airflow.operations.python import PythonOperator
 #모든 워크플로우는 DAG 정의에서부터 시작
 dag=DAG(
     dag_id="download_rocket_launches", #UI에 표시되는 DAG 이름
-    start_date=airflow.utils.dates.days_ago(14), #워크플로의 처음 실행 시간,
-    schedule_interval=None #DAG의 실행 간격. None = 자동으로 실행하지 않음
+    start_date=airflow.utils.dates.days_ago(14), #워크플로의 처음 실행 시작 날짜 = 14일 전
+    schedule_interval=None #DAG의 실행 간격. None = 자동으로 실행하지 않음. @daily = 매일 실행
 )
 
 def _get_pictures():
