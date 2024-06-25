@@ -20,6 +20,7 @@ dag=DAG(
 execution_date: 스케줄 간격의 시작 시간
 next_execution_date: 스케줄 간격의 종료 시간
 dag가 실제 실행되는 순간이 아니라, 예약 간격의 시작을 표시
+간격 명시 -> 증분 처리에 유리 than CRON
 '''
 
 
