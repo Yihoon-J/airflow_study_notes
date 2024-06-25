@@ -10,10 +10,17 @@ from airflow.operators.python import PythonOperator
 
 #DAG정의
 dag=DAG(
-    dag_id="01_unscheduled",
+    dag_id="ch3",
     start_date=dt.datetime(2024,1,1),
     schedule_interval=None, #스케줄링 X
 )
+
+'''
+schedule_interval='@daily' -> 매일 실행 (간격 정의 후 실행)
+schedule_interval='45 23 * * SAT' -> 매주 토요일 23:45 (CRON)
+schedule_interval=dt.timedelta(days=3) -> 3일마다 실행
+end_date=dt.datetime(2024,1,5) -> 1월 5일에 종료
+'''
 
 #API 호출 Task
 fetch_events=BashOperator(
