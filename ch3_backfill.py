@@ -1,4 +1,4 @@
-# API로 지난 30일간 이벤트 목록 호출
+# Backfill
 
 import datetime as dt
 from pathlib import Path
@@ -13,15 +13,12 @@ dag=DAG(
     dag_id="ch3",
     start_date=dt.datetime(2024,1,1),
     schedule_interval='@daily', #매일 실행
-    end_date=dt.datetime(2024,1,5)
+    end_date=dt.datetime(2024,1,5),
+    catchup=False #기본값 True
 )
 
 '''
-execution_date: 스케줄 간격의 시작 시간
-next_execution_date: 스케줄 간격의 종료 시간
-dag가 실제 실행되는 순간이 아니라, 예약 간격의 시작을 표시
-간격 명시 -> 증분 처리에 유리 than CRON
-이들 파라미터는 DAG 실행을 통해서만 저장되며, Webserver UI 등 수동 실행으로는 값이 기억되지 않음
+catchup 비활성화 -> 가장 최근의 스케줄 간격만 보고 태스크 실행, 더 과거의 스케줄 일정은 고려 X
 '''
 
 
@@ -30,10 +27,10 @@ fetch_events=BashOperator(
     task_id="fetch_events",
     bash_command=(
         "mkdir -p /data &&"
-        "curl -o /data/events/{{ds}}.json" #매일 json 파일 분리 (파티셔닝)
+        "curl -o /data/events/{{ds}}.json"
         "https://localhost:5000/events?"
-        "start_date={{execution_date.strftime('%Y-%m-%d')}}" #Jinja템플릿. {{ds}}로 축약 가능
-        "&end_date={{next_execution_date.strftime('%Y-%m-%d)}}" #{{next_ds}}로 축약 가능. cf) next_ds_nodash = YYYYMMDD 포맷
+        "start_date={{execution_date.strftime('%Y-%m-%d')}}"
+        "&end_date={{next_execution_date.strftime('%Y-%m-%d)}}"
     ),
     dag=dag,
 )
@@ -43,7 +40,6 @@ fetch_events=BashOperator(
 '''
 
 #이벤트에 대해 통계 계산
-#입출력 경로를 boilerplate code화
 def _calculate_stats(**context): #모든 콘텍스트 변수를 수신
     input_path=context["templates_dict"]["input_path"]
     output_path=context["templates_dict"]["output_path"]
