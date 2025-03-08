@@ -38,9 +38,6 @@ fetch_events=BashOperator(
     dag=dag,
 )
 
-'''
-
-'''
 
 #이벤트에 대해 통계 계산
 #입출력 경로를 boilerplate code화
